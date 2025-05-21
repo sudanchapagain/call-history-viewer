@@ -1,0 +1,1 @@
+rootProject.name = "call_history_viewer"

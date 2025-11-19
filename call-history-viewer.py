@@ -1,3 +1,9 @@
+# /// script
+# requires-python = ">=3.13"
+# dependencies = []
+# ///
+
+
 import os
 import csv
 import xml.etree.ElementTree as et
@@ -38,7 +44,7 @@ def parse_file(path: str) -> List[call]:
 
 
 def display_page(data: List[call], page: int) -> None:
-    """print a unicode-styled table of call records (paged)"""
+    """print a unicode-styled table of call records (sequentially paged)"""
     os.system("cls" if os.name == "nt" else "clear")
     total_pages = (len(data) + page_size - 1) // page_size
     start = page * page_size
@@ -68,24 +74,29 @@ def display_page(data: List[call], page: int) -> None:
     print(draw_border("╭", "┬", "╮"))
     print(draw_row(headers))
     print(draw_border("├", "┼", "┤"))
+
     for row in rows:
         print(draw_row(row))
+
     print(draw_border("╰", "┴", "╯"))
 
     print(f"page {page + 1} of {total_pages}\n")
 
 
 def search_calls(data: List[call], term: str) -> List[call]:
-    """filter calls by search term (case-insensitive, any field)"""
+    """filter calls by search terms (case-insensitive, any field)"""
     term = term.lower()
     return [c for c in data if term in " ".join(c).lower()]
 
 
 def sort_calls(data: List[call]) -> List[call]:
     """prompt for sort key and return sorted list"""
+
     keys = ["number", "duration", "readable_date", "type", "contact_name"]
-    print(f'sort by: {", ".join(keys)}')
+
+    print(f"sort by: {', '.join(keys)}")
     key = input("key: ").strip()
+
     if key in keys:
         return sorted(data, key=lambda c: getattr(c, key).lower())
     else:
@@ -99,8 +110,10 @@ def export_to_csv(data: List[call], filename: str = "export.csv") -> None:
         with open(filename, "w", newline="", encoding="utf-8") as f:
             writer = csv.writer(f)
             writer.writerow(call._fields)
+
             for c in data:
                 writer.writerow(c)
+
         print(f"exported to {filename}")
     except Exception as e:
         print(f"failed to export: {e}")
@@ -110,6 +123,7 @@ def prompt_file() -> str:
     """ask user for a valid xml file path"""
     while True:
         path = input("enter path to xml file: ").strip()
+
         if not path:
             print("empty path")
         elif not os.path.exists(path):
@@ -121,7 +135,7 @@ def prompt_file() -> str:
 
 
 def run_ui(data: List[call]) -> None:
-    """main interactive loop for viewing/searching/sorting/exporting"""
+    """main REPL for viewing/searching/sorting/exporting"""
     filtered = data
     page = 0
 
@@ -158,11 +172,14 @@ def run_ui(data: List[call]) -> None:
 
 def main():
     print("call history viewer (xml)\n")
+
     path = prompt_file()
     data = parse_file(path)
+
     if not data:
         print("no data found")
         return
+
     run_ui(data)
 
 

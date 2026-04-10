@@ -3,7 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "../include/tinyxml2.h"
+#include <tinyxml2.h>
 
 static int PAGE_SIZE = 50;
 
